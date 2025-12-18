@@ -65,5 +65,10 @@ python train.py
 ```bash
 python app.py
 ```
+---
+
+### Author
+
+Shveni Reddy Gobbur
 
 
