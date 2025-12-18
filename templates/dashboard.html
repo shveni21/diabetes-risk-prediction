@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Diabetes Prediction{% endblock %}
+
+{% block content %}
+<div class="bg-gray-900 text-gray-200 p-8 rounded-lg shadow-xl max-w-full mx-auto mt-10 border border-blue-900">
+    <h2 class="text-3xl font-bold text-blue-400 mb-6 text-center">Diabetes Dataset Dashboard</h2>
+    <p class="text-gray-400 mb-8 text-center">
+        Visualize key distributions and relationships within the synthetic diabetes prediction dataset.
+    </p>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]"> {# Added flex-col and min-h #}
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Diabetes Risk Distribution</h3>
+            <div class="relative flex-grow"> {# Container for canvas to control sizing #}
+                <canvas id="diabetesRiskPieChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]">
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Fingerprint Type Distribution</h3>
+            <div class="relative flex-grow">
+                <canvas id="fingerprintTypeDoughnutChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]">
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Family History Distribution</h3>
+            <div class="relative flex-grow">
+                <canvas id="familyHistoryPieChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]">
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Average Age by Diabetes Risk</h3>
+            <div class="relative flex-grow">
+                <canvas id="avgAgeBarChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]">
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Average BMI by Diabetes Risk</h3>
+            <div class="relative flex-grow">
+                <canvas id="avgBmiBarChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px] lg:col-span-2"> {# Takes 2 columns for wider chart #}
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Fingerprint Type vs. Diabetes Risk (Count)</h3>
+            <div class="relative flex-grow">
+                <canvas id="fpTypeRiskStackedBarChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700 hover:shadow-lg transition-shadow duration-300 flex flex-col min-h-[400px]">
+            <h3 class="text-xl font-semibold text-gray-300 mb-4 text-center">Average Ridge Count by Diabetes Risk</h3>
+            <div class="relative flex-grow">
+                <canvas id="ridgeCountLineChart" class="w-full h-full block"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    const chartData = {{ chart_data | tojson }};
+
+    // Global Chart.js configuration for dark theme and common options
+    Chart.defaults.color = '#cbd5e0'; // Default text color for chart elements (gray-300)
+    Chart.defaults.borderColor = '#4a5568'; // Default border/grid line color (gray-700)
+    Chart.defaults.font.family = 'Inter';
+    Chart.defaults.font.size = 12;
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false, // Allows canvas to stretch/shrink independently of aspect ratio
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#a0aec0' // Legend label color (gray-400)
+                }
+            },
+            title: {
+                display: false, // Titles are handled by HTML h3
+                text: '',
+                color: '#cbd5e0'
+            },
+            tooltip: {
+                backgroundColor: 'rgba(31, 41, 55, 0.9)', // gray-800 with opacity
+                titleColor: '#cbd5e0',
+                bodyColor: '#a0aec0',
+                borderColor: '#4a5568',
+                borderWidth: 1,
+                cornerRadius: 4
+            },
+            datalabels: { // If using chartjs-plugin-datalabels
+                color: '#cbd5e0',
+                textShadowBlur: 2,
+                textShadowColor: 'rgba(0,0,0,0.5)',
+                display: 'auto', // Auto-hide overlapping labels
+                clip: true // Don't draw labels outside the chart area
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#a0aec0' // X-axis tick color
+                },
+                grid: {
+                    color: '#2d3748' // X-axis grid color (gray-800)
+                },
+                title: {
+                    display: true,
+                    color: '#cbd5e0' // X-axis title color
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#a0aec0' // Y-axis tick color
+                },
+                grid: {
+                    color: '#2d3748' // Y-axis grid color
+                },
+                title: {
+                    display: true,
+                    color: '#cbd5e0' // Y-axis title color
+                }
+            }
+        }
+    };
+
+    function createChart(chartId, type, data, options) {
+        // Find the canvas element by its ID
+        const canvas = document.getElementById(chartId);
+        if (!canvas) {
+            console.error(`Canvas element with ID '${chartId}' not found.`);
+            return; // Exit if canvas is null
+        }
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+             console.error(`Could not get 2D context for canvas ID '${chartId}'.`);
+             return;
+        }
+
+        // Destroy any existing chart instance on the canvas before creating a new one
+        if (Chart.getChart(chartId)) {
+            Chart.getChart(chartId).destroy();
+        }
+
+        new Chart(ctx, {
+            type: type,
+            data: data,
+            options: options,
+            plugins: [ChartDataLabels] // Register plugin if used
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pie Chart: Diabetes Risk Distribution
+        createChart('diabetesRiskPieChart', 'pie', chartData.diabetesRiskPieData, {
+            ...commonOptions,
+            scales: {}, // Pie charts don't use x/y scales
+            plugins: {
+                ...commonOptions.plugins,
+                title: { display: false },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => { sum += data; });
+                        let percentage = (value * 100 / sum).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#fff', // White for labels on dark background
+                    textShadowColor: 'rgba(0,0,0,0.7)',
+                    textShadowBlur: 5,
+                    display: 'auto', // Ensure auto-hide for pie labels
+                    clip: true
+                }
+            }
+        });
+
+        // Doughnut Chart: Fingerprint Type Distribution
+        createChart('fingerprintTypeDoughnutChart', 'doughnut', chartData.fingerprintTypeDoughnutData, {
+            ...commonOptions,
+            scales: {},
+            plugins: {
+                ...commonOptions.plugins,
+                title: { display: false },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => { sum += data; });
+                        let percentage = (value * 100 / sum).toFixed(1) + '%';
+                        return ctx.chart.data.labels[ctx.dataIndex] + '\n' + percentage; // Label and percentage
+                    },
+                    color: '#fff',
+                    textShadowColor: 'rgba(0,0,0,0.7)',
+                    textShadowBlur: 5,
+                    font: { size: 10 },
+                    display: 'auto', // Ensure auto-hide for doughnut labels
+                    clip: true
+                }
+            }
+        });
+
+        // Pie Chart: Family History Distribution
+        createChart('familyHistoryPieChart', 'pie', chartData.familyHistoryPieData, {
+            ...commonOptions,
+            scales: {},
+            plugins: {
+                ...commonOptions.plugins,
+                title: { display: false },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => { sum += data; });
+                        let percentage = (value * 100 / sum).toFixed(1) + '%';
+                        return percentage;
+                    },
+                    color: '#fff',
+                    textShadowColor: 'rgba(0,0,0,0.7)',
+                    textShadowBlur: 5,
+                    display: 'auto', // Ensure auto-hide for pie labels
+                    clip: true
+                }
+            }
+        });
+
+        // Bar Chart: Average Age by Diabetes Risk
+        createChart('avgAgeBarChart', 'bar', chartData.avgAgeBarData, {
+            ...commonOptions,
+            plugins: { ...commonOptions.plugins, title: { display: false } },
+            scales: {
+                x: { ...commonOptions.scales.x, title: { display: true, text: 'Diabetes Risk' } },
+                y: { ...commonOptions.scales.y, beginAtZero: true, title: { display: true, text: 'Average Age' } }
+            }
+        });
+
+        // Bar Chart: Average BMI by Diabetes Risk
+        createChart('avgBmiBarChart', 'bar', chartData.avgBmiBarData, {
+            ...commonOptions,
+            plugins: { ...commonOptions.plugins, title: { display: false } },
+            scales: {
+                x: { ...commonOptions.scales.x, title: { display: true, text: 'Diabetes Risk' } },
+                y: { ...commonOptions.scales.y, beginAtZero: true, title: { display: true, text: 'Average BMI' } }
+            }
+        });
+
+        // Stacked Bar Chart: Fingerprint Type vs. Diabetes Risk
+        createChart('fpTypeRiskStackedBarChart', 'bar', chartData.fpTypeRiskStackedBarData, {
+            ...commonOptions,
+            plugins: { ...commonOptions.plugins, title: { display: false } },
+            scales: {
+                x: { ...commonOptions.scales.x, stacked: true, title: { display: true, text: 'Fingerprint Type' } },
+                y: { ...commonOptions.scales.y, stacked: true, beginAtZero: true, title: { display: true, text: 'Count' } }
+            }
+        });
+        
+        // Line Chart: Average Ridge Count by Diabetes Risk
+        createChart('ridgeCountLineChart', 'line', chartData.ridgeCountLineData, {
+            ...commonOptions,
+            plugins: { ...commonOptions.plugins, title: { display: false } },
+            scales: {
+                x: { ...commonOptions.scales.x, title: { display: true, text: 'Diabetes Risk' } },
+                y: { ...commonOptions.scales.y, beginAtZero: true, title: { display: true, text: 'Average Ridge Count' } }
+            }
+        });
+    });
+</script>
+{% endblock %}

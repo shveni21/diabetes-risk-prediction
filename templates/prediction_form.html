@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Step 2: Diabetes Risk Prediction{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+     style="background-image: url('{{ url_for('static', filename='img/bg1.png') }}'); background-size: cover; background-position: center;">
+
+    {# The main prompt/card container with dual-color background #}
+    <div class="relative z-10 p-8 rounded-lg shadow-lg max-w-2xl w-full text-center overflow-hidden"
+         style="background: linear-gradient(to right, #00BCD4, #8BC34A);"> {# Adjusted colors for blue to green gradient #}
+        
+        <h2 class="text-3xl font-bold text-white mb-6">Step 2: Diabetes Risk Prediction</h2>
+        <div class="prefilled-info bg-blue-100 bg-opacity-80 border-l-4 border-blue-500 text-blue-900 p-4 mb-6 rounded-md text-left"> {# Added text-left for better readability #}
+            <h3 class="text-xl font-semibold text-blue-800 mb-3">Fingerprint Data (Pre-filled):</h3>
+            <p class="mb-2"><strong>Fingerprint Type:</strong> <span class="font-medium">{{ fingerprint_type | title }}</span></p>
+            <p><strong>Ridge Count:</strong> <span class="font-medium">{{ ridge_count }}</span></p>
+        </div>
+
+        <form method="POST" action="{{ url_for('predict_diabetes') }}" class="space-y-5 text-left"> {# Added text-left for form labels #}
+            <input type="hidden" name="fingerprint_type_hidden" value="{{ fingerprint_type }}">
+            <input type="hidden" name="ridge_count_hidden" value="{{ ridge_count }}">
+
+            <div class="form-group">
+                <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
+                <input type="number" id="age" name="age" min="1" max="120" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       placeholder="Enter your age">
+            </div>
+            <div class="form-group">
+                <label for="bmi" class="block text-white text-sm font-bold mb-2">BMI:</label>
+                <input type="text" id="bmi" name="bmi" placeholder="e.g., 25.5" required
+                       class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="form-group">
+                <label for="family_history" class="block text-white text-sm font-bold mb-2">Family History of Diabetes:</label>
+                <select id="family_history" name="family_history" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <option value="">--Select--</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline w-full transition duration-300">
+                Predict Diabetes Risk
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

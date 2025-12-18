@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Diabetes Prediction{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        @apply bg-gray-900 text-gray-200; /* Changed to dark background and light text */
+      }
+      .flash-message {
+        @apply p-3 mb-4 rounded-lg text-center font-medium;
+      }
+      .flash-success {
+        @apply bg-green-800 text-white border border-green-600; /* Darker for dark background */
+      }
+      .flash-danger {
+        @apply bg-red-800 text-white border border-red-600; /* Darker for dark background */
+      }
+      .flash-info {
+        @apply bg-blue-800 text-white border border-blue-600; /* Darker for dark background */
+      }
+      .btn-primary {
+        @apply bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300 ease-in-out;
+      }
+      /* Additional styles for the dark theme */
+      .chart-card {
+        background-color: #1f2937; /* Tailwind gray-800 */
+      }
+      .chart-card h3 {
+        color: #d1d5db; /* Tailwind gray-300 */
+      }
+
+      /* Custom styles for the footer inspired by the gym site */
+      .footer-social-icon {
+        @apply inline-block bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition duration-300;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <nav class="bg-gray-800 p-4 text-white shadow-md">
+      <div class="container mx-auto flex justify-between items-center">
+        <a
+          href="{{ url_for('index_page') }}"
+          class="text-2xl font-bold rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+          >Diabetes AI</a
+        >
+        <div class="space-x-4">
+          <a
+            href="{{ url_for('index_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >Home</a
+          >
+          <a
+            href="{{ url_for('about_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >About</a
+          >
+          <a
+            href="{{ url_for('dashboard_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >Dashboard</a
+          >
+          {% if 'user_id' in session %}
+          <a
+            href="{{ url_for('upload_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >Predict Risk</a
+          >
+          <span class="text-gray-300">Hello, {{ session.username }}!</span>
+          <a
+            href="{{ url_for('logout') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-red-600 bg-red-500 transition-colors"
+            >Logout</a
+          >
+          {% else %}
+          <a
+            href="{{ url_for('register_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >Register</a
+          >
+          <a
+            href="{{ url_for('login_page') }}"
+            class="hover:underline rounded-lg px-3 py-1 hover:bg-gray-700 transition-colors"
+            >Login</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul class="list-none p-0 mx-auto max-w-lg mt-4">
+        {% for category, message in messages %}
+        <li class="flash-message flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-blue-900 text-gray-300 pt-16 pb-8 mt-auto relative">
+      {# Scroll to top button #}
+      <button
+        class="absolute bottom-8 right-8 bg-red-500 text-white p-3 rounded-full shadow-lg hover:bg-red-600 transition-colors duration-300"
+        onclick="window.scrollTo({ top: 0, behavior: 'smooth' });"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 10l7-7m0 0l7 7m-7-7v18"
+          ></path>
+        </svg>
+      </button>
+
+      <div class="container mx-auto px-4">
+        <div class="flex flex-wrap justify-between items-start mb-10 -mx-4">
+          {# Email Subscribe Section #}
+          <div class="w-full lg:w-1/3 px-4 mb-8 lg:mb-0">
+            <h3 class="text-xl font-bold text-white mb-4">
+              Subscribe to our Newsletter
+            </h3>
+            <div class="flex">
+              <input
+                type="email"
+                placeholder="Email address to Subscribe"
+                class="p-3 rounded-l-md w-full focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900"
+              />
+              <button
+                class="bg-red-500 text-white px-6 py-3 rounded-r-md hover:bg-red-600 transition duration-300"
+              >
+                Subscribe
+              </button>
+            </div>
+            <div class="flex space-x-4 mt-6">
+              <a href="#" class="footer-social-icon"
+                ><svg
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33V22H12c5.523 0 10-4.477 10-10Z"
+                    clip-rule="evenodd"
+                  /></svg
+              ></a>
+              <a href="#" class="footer-social-icon"
+                ><svg
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M.051 1.056A.75.75 0 0 1 .16 0h23.68c.118 0 .227.068.277.16L12 12.828.051 1.056Z"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    d="M0 1.99v16.712A3.25 3.25 0 0 0 3.25 21.954h17.5c1.802 0 3.25-1.448 3.25-3.25V1.99L12 10.99 0 1.99Z"
+                    clip-rule="evenodd"
+                  /></svg
+              ></a>
+              <a href="#" class="footer-social-icon"
+                ><svg
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M.05 3.513A.75.75 0 0 1 .75 2.75h22.5a.75.75 0 0 1 .7.763V20.5a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1-.75-.75V3.513Z"
+                  /></svg
+              ></a>
+              <a href="#" class="footer-social-icon"
+                ><svg
+                  class="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.866 8.163 6.84 9.489.5.092.682-.217.682-.483 0-.237-.007-.87-.012-1.703-2.782.605-3.369-1.34-3.369-1.34-.454-1.15-.111-1.46-.08-1.554.249-.199 1.805 1.832 2.71 2.37.893.153 1.77.126 2.457.097.085-.67.35-1.34 1-1.644-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.12-.3-.535-1.52.12-3.18 0 0 1-.322 3.3-1.23.963-.266 1.98-.399 3-.405 1.02.006 2.037.139 3 .405 2.3 1.08 3.3 1.23 3.3 1.23.655 1.66.24 2.88.12 3.18.765.84 1.23 1.91 1.23 3.22 0 4.61-2.802 5.625-5.475 5.922.357.307.678.915.678 1.855 0 1.34-.012 2.417-.012 2.747 0 .268.18.577.688.488C19.137 20.16 22 16.416 22 12c0-5.523-4.477-10-10-10Z"
+                    clip-rule="evenodd"
+                  /></svg
+              ></a>
+            </div>
+          </div>
+
+          {# Project Info Section #}
+          <div class="w-full sm:w-1/2 lg:w-1/5 px-4 mb-8 lg:mb-0">
+            <h4 class="text-xl font-bold text-white mb-4">Diabetes AI</h4>
+            <p class="text-sm leading-relaxed">
+              Revolutionizing diabetes risk prediction through advanced AI and
+              fingerprint biometrics. Empowering proactive health management.
+            </p>
+          </div>
+
+          {# Quick Links Section #}
+          <div class="w-full sm:w-1/2 lg:w-1/5 px-4 mb-8 lg:mb-0">
+            <h4 class="text-xl font-bold text-white mb-4">Quick Links</h4>
+            <ul>
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('index_page') }}"
+                  class="hover:text-red-500 transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('about_page') }}"
+                  class="hover:text-red-500 transition-colors"
+                  >About Us</a
+                >
+              </li>
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('upload_page') }}"
+                  class="hover:text-red-500 transition-colors"
+                  >Predict Risk</a
+                >
+              </li>
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('dashboard_page') }}"
+                  class="hover:text-red-500 transition-colors"
+                  >Dashboard</a
+                >
+              </li>
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('about_page') }}"
+                  class="hover:text-red-500 transition-colors"
+                  >Contact Us</a
+                >
+              </li>
+              <li class="mb-2">
+                <a href="#" class="hover:text-red-500 transition-colors"
+                  >Privacy Policy</a
+                >
+              </li>
+              {# Placeholder for Privacy Policy #}
+            </ul>
+          </div>
+
+          {# Contact Info Section #}
+          <div class="w-full sm:w-1/2 lg:w-1/5 px-4 mb-8 lg:mb-0">
+            <h4 class="text-xl font-bold text-white mb-4">Contact Info</h4>
+            <ul>
+              <li class="mb-2 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.54 22.351A2.735 2.735 0 0 0 14 19.957V4.375a2.25 2.25 0 0 0-4.5 0V19.957c0 .878-.293 1.748-.838 2.394a.75.75 0 0 0 1.06 1.06c.945-.945 1.579-2.022 1.838-3.235ZM18.75 4.375a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM16.5 4.375v1.5a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0ZM20.25 4.375v1.5a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0ZM15 4.375v1.5a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0ZM13.5 4.375v1.5a.75.75 0 0 0 1.5 0v-1.5a.75.75 0 0 0-1.5 0ZM2.25 4.375h-.75a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5ZM4.5 4.375h-.75a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5ZM7.5 4.375h-.75a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5ZM9 4.375h-.75a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5ZM.75 6.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 8.125H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 9.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 11.125H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 12.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 14.125H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 15.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 17.125H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 18.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 20.125H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM.75 21.625H2.25a.75.75 0 0 0 0-1.5H.75a.75.75 0 0 0 0 1.5ZM21 16.5a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 15a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 13.5a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 12a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 10.5a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 9a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 7.5a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 6a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21ZM21 21.75a.75.75 0 0 0 0-1.5H19.5a.75.75 0 0 0 0 1.5H21Z"
+                    clip-rule="evenodd"
+                  /></svg
+                >No. 42, AI Street, Chennai, TN 600001
+              </li>
+              <li class="mb-2 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M1.5 8.67v8.586A2.25 2.25 0 0 0 3.75 19.5h16.5A2.25 2.25 0 0 0 22.5 17.25V8.67l-10.44 5.22a1.5 1.5 0 0 1-1.62 0L1.5 8.67ZM22.5 6.907L12 1.5 1.5 6.907V5.25A2.25 2.25 0 0 1 3.75 3h16.5A2.25 2.25 0 0 1 22.5 5.25v1.657Z"
+                  /></svg
+                >info@diabetesai.com
+              </li>
+              <li class="mb-2 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M1.5 4.5a3 3 0 0 1 3-3h15a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H4.5a3 3 0 0 1-3-3V4.5Zm10.5 5.25a.75.75 0 0 0 0 1.5h3.75a.75.75 0 0 0 0-1.5h-3.75ZM8.25 9.75a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5h-7.5ZM8.25 11.25a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5h-7.5ZM1.5 4.5v3.626c0 1.05 1.137 1.637 2.067 1.127l3.962-2.193a.75.75 0 0 1 .865 1.393L5.432 11.97l.75.415a.75.75 0 0 0 .865-1.393L4.567 8.01c-.93-.51-2.067.078-2.067 1.128v7.362A1.5 1.5 0 0 0 4.5 19.5h15a1.5 1.5 0 0 0 1.5-1.5v-7.362c0-1.05-1.137-1.637-2.067-1.127l-3.962 2.193a.75.75 0 0 1-.865-1.393l2.853-1.581-.75-.415a.75.75 0 0 0-.865 1.393l3.962 2.193c.93.51 2.067-.078 2.067-1.128V4.5a1.5 1.5 0 0 0-1.5-1.5H4.5a1.5 1.5 0 0 0-1.5 1.5Z"
+                    clip-rule="evenodd"
+                  /></svg
+                >+91 1234 567890
+              </li>
+            </ul>
+          </div>
+
+          {# Recent Work/News Section (Renamed) #}
+          <div class="w-full sm:w-1/2 lg:w-1/5 px-4">
+            <h4 class="text-xl font-bold text-white mb-4">Latest Updates</h4>
+            <div class="grid grid-cols-3 gap-2">
+              {# Replace with actual image tags pointing to your static/img for
+              news/updates #}
+              <img
+                src="{{ url_for('static', filename='img/update_1.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+              <img
+                src="{{ url_for('static', filename='img/update_2.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+              <img
+                src="{{ url_for('static', filename='img/update_3.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+              <img
+                src="{{ url_for('static', filename='img/update_4.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+              <img
+                src="{{ url_for('static', filename='img/update_5.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+              <img
+                src="{{ url_for('static', filename='img/update_6.jpg') }}"
+                alt="Latest Update"
+                class="w-full h-auto rounded-sm"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 pt-8 text-center text-sm">
+          <p>
+            &copy; 2024 Diabetes AI Project. All rights reserved.
+            <!-- <span class="text-red-500">S</span> -->
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

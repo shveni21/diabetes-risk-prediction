@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Suggestions - Diabetes Prediction{% endblock %}
+
+{% block content %}
+<div class="relative min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+     style="background: linear-gradient(to right, #00BCD4, #8BC34A);"> {# Blue to Green gradient background #}
+
+    <div class="relative z-10 bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto w-full text-gray-800">
+        <h2 class="text-3xl font-bold text-blue-700 mb-6 text-center">Personalized Suggestions for Diabetes Risk</h2>
+
+        <div class="mb-8 p-4 rounded-md text-center
+            {% if diabetes_risk == 'LOW' %} bg-green-100 text-green-800 border border-green-400
+            {% elif diabetes_risk == 'MEDIUM' %} bg-yellow-100 text-yellow-800 border border-yellow-400
+            {% else %} bg-red-100 text-red-800 border border-red-400
+            {% endif %}">
+            <p class="text-xl font-semibold">Your Predicted Diabetes Risk: <span class="font-extrabold">{{ diabetes_risk | title }}</span></p>
+        </div>
+
+        <div class="space-y-8">
+            {# General Advice Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">General Health Recommendations</h3>
+                <p class="text-gray-700">Regardless of your risk level, maintaining a healthy lifestyle is crucial for preventing and managing diabetes. Here are some general guidelines:</p>
+            </div>
+
+            {# Diet Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">Dietary Guidelines</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Balanced Meals:</strong> Focus on whole foods, including plenty of vegetables, fruits, lean proteins, and whole grains.</li>
+                    <li><strong>Limit Sugars:</strong> Reduce intake of sugary drinks, processed foods, and refined carbohydrates.</li>
+                    <li><strong>Healthy Fats:</strong> Choose healthy fats from sources like avocados, nuts, seeds, and olive oil.</li>
+                    <li><strong>Portion Control:</strong> Be mindful of portion sizes to manage calorie intake.</li>
+                    <li><strong>Hydration:</strong> Drink plenty of water throughout the day.</li>
+                </ul>
+                {% if diabetes_risk == 'HIGH' %}
+                <p class="mt-4 text-red-700 font-semibold"><strong>High Risk Specific:</strong> Strictly adhere to a low-glycemic diet. Consider consulting a registered dietitian for a personalized meal plan.</p>
+                {% elif diabetes_risk == 'MEDIUM' %}
+                <p class="mt-4 text-yellow-700 font-semibold"><strong>Medium Risk Specific:</strong> Pay close attention to carbohydrate intake and choose complex carbs. Limit saturated and trans fats.</p>
+                {% endif %}
+            </div>
+
+            {# Lifestyle Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">Lifestyle Adjustments</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Stress Management:</strong> Practice stress-reducing techniques like meditation, yoga, or deep breathing.</li>
+                    <li><strong>Quit Smoking:</strong> If you smoke, quitting is one of the most impactful changes you can make.</li>
+                    <li><strong>Limit Alcohol:</strong> Consume alcohol in moderation, if at all.</li>
+                    <li><strong>Regular Check-ups:</strong> Schedule regular health check-ups with your doctor.</li>
+                </ul>
+                {% if diabetes_risk == 'HIGH' %}
+                <p class="mt-4 text-red-700 font-semibold"><strong>High Risk Specific:</strong> Implement significant lifestyle changes immediately. Seek professional guidance for comprehensive wellness planning.</p>
+                {% endif %}
+            </div>
+
+            {# Exercise Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">Exercise Recommendations</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Aerobic Activity:</strong> Aim for at least 150 minutes of moderate-intensity aerobic exercise per week (e.g., brisk walking, cycling, swimming).</li>
+                    <li><strong>Strength Training:</strong> Incorporate strength training exercises at least twice a week.</li>
+                    <li><strong>Stay Active:</strong> Reduce sedentary time by taking short walks or stretching breaks throughout the day.</li>
+                </ul>
+                {% if diabetes_risk == 'HIGH' %}
+                <p class="mt-4 text-red-700 font-semibold"><strong>High Risk Specific:</strong> Increase physical activity gradually under medical supervision. Consider high-intensity interval training (HIIT) if appropriate.</p>
+                {% elif diabetes_risk == 'MEDIUM' %}
+                <p class="mt-4 text-yellow-700 font-semibold"><strong>Medium Risk Specific:</strong> Consistently meet recommended exercise guidelines. Explore different activities to find what you enjoy.</p>
+                {% endif %}
+            </div>
+
+            {# Sleep Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">Sleep Hygiene</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Consistent Schedule:</strong> Go to bed and wake up at the same time each day, even on weekends.</li>
+                    <li><strong>Adequate Sleep:</strong> Aim for 7-9 hours of quality sleep per night.</li>
+                    <li><strong>Comfortable Environment:</strong> Ensure your bedroom is dark, quiet, and cool.</li>
+                    <li><strong>Limit Screens:</strong> Avoid screens (phones, tablets, TV) at least an hour before bedtime.</li>
+                </ul>
+                {% if diabetes_risk == 'HIGH' %}
+                <p class="mt-4 text-red-700 font-semibold"><strong>High Risk Specific:</strong> Prioritize sleep and address any sleep disorders (e.g., sleep apnea) with a healthcare professional.</p>
+                {% endif %}
+            </div>
+
+            {# Medical Details Section #}
+            <div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 class="text-2xl font-semibold text-blue-600 mb-4">Medical Considerations</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>Consult Your Doctor:</strong> Always discuss your risk assessment and any health concerns with a qualified medical professional.</li>
+                    <li><strong>Regular Monitoring:</strong> Your doctor may recommend specific tests (e.g., A1C, fasting blood glucose) for regular monitoring.</li>
+                    <li><strong>Medication (if applicable):</strong> Follow your doctor's advice regarding any prescribed medications.</li>
+                </ul>
+                {% if diabetes_risk == 'HIGH' %}
+                <p class="mt-4 text-red-700 font-semibold"><strong>High Risk Specific:</strong> Immediate consultation with an endocrinologist or a doctor specializing in diabetes is highly recommended for comprehensive evaluation and management plan.</p>
+                {% elif diabetes_risk == 'MEDIUM' %}
+                <p class="mt-4 text-yellow-700 font-semibold"><strong>Medium Risk Specific:</strong> Discuss your risk with your primary care physician and consider more frequent screenings.</p>
+                {% else %} {# LOW Risk #}
+                <p class="mt-4 text-green-700 font-semibold"><strong>Low Risk Specific:</strong> Continue with healthy habits and regular check-ups to maintain your low risk status.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-600">
+                *Disclaimer: These suggestions are for informational purposes only and do not constitute medical advice. Always consult with a healthcare professional for personalized guidance.*
+            </p>
+            <a href="{{ url_for('index_page') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 mt-6">
+                Go to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
