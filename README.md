@@ -38,7 +38,7 @@ The model demonstrated strong predictive performance for **risk stratification**
 ---
 
 ## 📂 Project Structure
-Code/
+```
 │── train.py # Model training and evaluation
 │── app.py # Lightweight Flask-based inference
 │── fingerprint_dataset.csv # Dataset
@@ -47,3 +47,23 @@ Code/
 ├── notebooks/ # Data analysis and experimentation
 ├── model/ # Saved trained models
 └── static / templates # Minimal UI for testing predictions
+```
+
+---
+
+## ▶️ Running the Project
+
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+### 2. Train the model
+```bash
+python train.py
+```
+### 3. Run inference (optional)
+```bash
+python app.py
+```
+
+
